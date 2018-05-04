@@ -1,4 +1,5 @@
-package app.leinhio.com.proyectoarquitecturasmoviles;
+package com.arquitecturasmoviles.messibot;
+
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     BluetoothAdapter mBluetoothAdapter;
     Button btnEnableDisable_Discoverable;
     BluetoothConnectionService mBluetoothConnection;
-    Button btnStartConnection;
+    //Button btnStartConnection;
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -162,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btnEnableDisable_Discoverable = (Button) findViewById(R.id.btnDiscoverable_on_off);
         lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
         mBTDevices = new ArrayList<>();
-        btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
+        //btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
 
         //Broadcasts cuando cambia el estado del enlace
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -180,12 +181,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        btnStartConnection.setOnClickListener(new View.OnClickListener() {
+        /*btnStartConnection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startConnection();
             }
-        });
+        });*/
     }
 
     //crear método para iniciar la conexión
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void startBTConnection(BluetoothDevice device, UUID uuid){
-        Log.d(TAG, "startBTConnection: Inicialización de la conexión Bluetooth RFCOM.");
+        Log.d(TAG, "startBTConnection: Inicializaci�n de la conexi�n Bluetooth RFCOM.");
 
         mBluetoothConnection.startClient(device,uuid);
     }

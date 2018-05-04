@@ -1,4 +1,4 @@
-package app.leinhio.com.proyectoarquitecturasmoviles;
+package com.arquitecturasmoviles.messibot;
 
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
