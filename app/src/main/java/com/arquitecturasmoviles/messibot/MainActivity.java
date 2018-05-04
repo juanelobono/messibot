@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void startBTConnection(BluetoothDevice device, UUID uuid){
-        Log.d(TAG, "startBTConnection: Inicializaci�n de la conexi�n Bluetooth RFCOM.");
+        Log.d(TAG, "startBTConnection: Inicialización de la conexión Bluetooth RFCOM.");
 
         mBluetoothConnection.startClient(device,uuid);
     }
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //primero cancela el descubrimiento porque es muy intensivo en memoria.
         mBluetoothAdapter.cancelDiscovery();
 
-        Log.d(TAG, "onItemClick: Ha hecho clic en un dispositivo.");
+        Log.d(TAG, "onItemClick: Ha hecho click en un dispositivo.");
         String deviceName = mBTDevices.get(i).getName();
         String deviceAddress = mBTDevices.get(i).getAddress();
 
