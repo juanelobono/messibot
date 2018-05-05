@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -267,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      en el manifiesto no es suficiente.
      NOTA: Esto sólo se ejecutará en las versiones > LOLLIPOP porque de lo contrario no es necesario.
      */
+    @RequiresApi(api = VERSION_CODES.M)
     private void checkBTPermissions() {
         if(VERSION.SDK_INT > VERSION_CODES.LOLLIPOP){
             int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
