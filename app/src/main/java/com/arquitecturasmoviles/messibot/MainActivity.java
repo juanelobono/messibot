@@ -20,6 +20,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static android.os.Build.*;
+
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     private static final String TAG = "MainActivity";
@@ -248,10 +250,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
         }
         if(!mBluetoothAdapter.isDiscovering()){
+            int versionAPI = VERSION.SDK_INT;
 
             //Chequea permisos Bluetooth en el manifesto
-            checkBTPermissions();
-
+            if (versionAPI > 22){
+                checkBTPermissions();
+            }
             mBluetoothAdapter.startDiscovery();
             IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
@@ -264,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      NOTA: Esto sólo se ejecutará en las versiones > LOLLIPOP porque de lo contrario no es necesario.
      */
     private void checkBTPermissions() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+        if(VERSION.SDK_INT > VERSION_CODES.LOLLIPOP){
             int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
             permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
             if (permissionCheck != 0) {
@@ -289,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //crear el vínculo.
         //NOTA: Requiere API 17 (JellyBean)
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
+        if(VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2){
             Log.d(TAG, "Tratando de emparejarse con " + deviceName);
             mBTDevices.get(i).createBond();
 
