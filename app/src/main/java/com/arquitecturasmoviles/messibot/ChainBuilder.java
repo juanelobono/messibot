@@ -5,10 +5,9 @@ public class ChainBuilder {
     public static final int START_CHAIN = 0x7E;
 
     public byte[] makeChain(int frameType, byte[] data) {
-        byte lbs = 0x0; //TODO: LBS function
-        byte mbs = 0x0; //TODO: MBS function
+        byte[] mbsLbs = BytesUtility.getMSBandLSB(data);
 
-        byte[] chain = {START_CHAIN, lbs, mbs };
+        byte[] chain = {START_CHAIN, mbsLbs[0], mbsLbs[1] };
 
         for (int i = 0; i <= data.length; i++) {
             chain[chain.length + 1] = data[i];
