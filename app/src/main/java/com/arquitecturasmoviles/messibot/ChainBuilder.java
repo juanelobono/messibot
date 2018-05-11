@@ -3,6 +3,10 @@ package com.arquitecturasmoviles.messibot;
 public class ChainBuilder {
 
     public static final int START_CHAIN = 0x7E;
+    private CheckSum checkSum;
+    public ChainBuilder() {
+        this.checkSum = new CheckSum();
+    }
 
     public byte[] makeChain(int frameType, byte[] data) {
         byte[] mbsLbs = BytesUtility.getMSBandLSB(data);
@@ -13,7 +17,10 @@ public class ChainBuilder {
             chain[chain.length + 1] = data[i];
         }
 
-        int checkSum = 0xFF; //TODO: function check sum
+        data[data.length + 1] = (byte) frameType;
+
+        int checkSum = this.checkSum.CalculateCheckSum(data);
+
         chain[chain.length + 1] = (byte) checkSum;
 
         return chain;
