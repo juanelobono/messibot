@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+       //Addition4: Fabric Crashlytics Plugin
+       <meta-data
+           android:name="io.fabric.ApiKey"
+           android:value="6c54388bf65e54d51e097ea7abb0560f97c95203"
+           />
+       //Addition4: Fin
     </application>
-
+    //Addition5: Fabric Crashlytics Plugin
+    <uses-permission android:name="android.permission.INTERNET" />
+    //Addition5: Fin
 </manifest>

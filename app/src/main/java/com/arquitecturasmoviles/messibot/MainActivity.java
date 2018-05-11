@@ -1,24 +1,36 @@
+//El uso del Plugin Fabric Crashlytics requiere de siete adiciones de codigo que marcamos en la app, 3/7 se encuentran en build.gradle.app
+// 2/7 AndroidManifest y 2/7 en MainActivity, una adicion en la parte de librerias, y la otra adicion en el metodo onCreate
 package com.arquitecturasmoviles.messibot;
 
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.UUID;
+
+//Addition6: Fabric Crashlytics Plugin
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
+//Addition6: Fin
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
@@ -107,15 +119,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private BroadcastReceiver mBroadcastReceiver3 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            boolean contains = false;
+
             final String action = intent.getAction();
             Log.d(TAG, "onReceive: ACTION FOUND.");
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
-                mBTDevices.add(device);
-                Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress());
-                mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
-                lvNewDevices.setAdapter(mDeviceListAdapter);
+
+                for (BluetoothDevice dispositivo : mBTDevices) {
+                    if (dispositivo.equals(device))
+                        contains = true;
+                }
+                if(!contains) {
+                    mBTDevices.add(device);
+                    Log.d(TAG, "onReceive: " + device.getName() + ": " + device.getAddress());
+                    mDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, mBTDevices);
+                    lvNewDevices.setAdapter(mDeviceListAdapter);
+                }
             }
         }
     };
@@ -158,6 +180,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Addition7: Fabric Crashlytics Plugin: Inicio
+        Fabric.with(this, new Crashlytics());
+        //Addition7: Fin
+
+        //Llamamos al metodo para que muestre una ventana donde indicara que encienda el BT o cierre la app
+        mostrarAlertDialogPermisoBT();
+
         setContentView(R.layout.activity_main);
         Button btnONOFF = (Button) findViewById(R.id.btnONOFF);
         btnEnableDisable_Discoverable = (Button) findViewById(R.id.btnDiscoverable_on_off);
@@ -173,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         lvNewDevices.setOnItemClickListener(MainActivity.this);
 
+        //Aqui se escucha el los eventos del boton ON/OFF. Cuando se apriete invocara al metodo enableDisbleBT
         btnONOFF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -181,12 +212,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        /*btnStartConnection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startConnection();
-            }
-        });*/
+        //Metodo del boton Iniciar Conexion
+        //btnStartConnection.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View view) {
+        //        startConnection();
+        //    }
+        //});
     }
 
     //crear método para iniciar la conexión
@@ -196,11 +228,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void startBTConnection(BluetoothDevice device, UUID uuid){
-        Log.d(TAG, "startBTConnection: Inicialización de la conexión Bluetooth RFCOM.");
-
-        mBluetoothConnection.startClient(device,uuid);
+        if(device == null) {
+            Log.d(TAG, "startBTConnection: Inicialización de la conexión Bluetooth RFCOM.");
+            mBluetoothConnection.startClient(device, uuid);
+        }
+        else{
+            String TEXTTOAST = "No ha seleccionado ningun dispositivo";
+            Toast.makeText(MainActivity.this,TEXTTOAST, Toast.LENGTH_SHORT).show();
+        }
     }
 
+    //Acciones que se realizan cuando se aprieta el boton ON/OFF, que se utiliza para encender y apagar BT
     public void enableDisableBT(){
         if(mBluetoothAdapter == null){
             Log.d(TAG, "enableDisableBT: Bluetooth no soportado.");
@@ -233,6 +271,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         registerReceiver(mBroadcastReceiver2,intentFilter);
 
     }
+    @TargetApi(Build.VERSION_CODES.M)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void btnDiscover(View view) {
         Log.d(TAG, "btnDiscover: Búsqueda de dispositivos no emparejados.");
 
@@ -263,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      en el manifiesto no es suficiente.
      NOTA: Esto sólo se ejecutará en las versiones > LOLLIPOP porque de lo contrario no es necesario.
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void checkBTPermissions() {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
             int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
@@ -296,5 +337,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mBTDevice = mBTDevices.get(i);
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
         }
+    }
+
+    public void mostrarAlertDialogPermisoBT(){
+
+        AlertDialog.Builder builderAlertDialog = new AlertDialog.Builder(this);
+        String MENSAJEALERTDIALOG = "La Aplicacion requiere que el Bluetooth este encendido";
+        String TITULOALERTDIALOG = "Permiso BT";
+        builderAlertDialog.setMessage(MENSAJEALERTDIALOG);
+        builderAlertDialog.setTitle(TITULOALERTDIALOG);
+        builderAlertDialog.setPositiveButton("Encender", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                enableDisableBT();
+            }
+        });
+        builderAlertDialog.setNegativeButton("Cerrar App", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int p = android.os.Process.myPid();
+                android.os.Process.killProcess(p);
+            }
+        });
+
+        AlertDialog dialog = builderAlertDialog.create();
+        dialog.show();
+
+
     }
 }
