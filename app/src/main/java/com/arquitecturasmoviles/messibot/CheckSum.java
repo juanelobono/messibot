@@ -8,7 +8,7 @@ public class CheckSum {
             CheckSum += (bytes[i] & 0xFF);
         }
 
-        return CheckSum;
+        return 255 - CheckSum;
     }
 
     String CalculateCheckSum( Integer[] bytes ){
