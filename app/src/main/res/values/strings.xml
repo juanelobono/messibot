@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">MessiBot</string>
+    <string name="enable_bluetooth_canceled">El bluetooth no está activado. Active el Bluetooth para poder jugar.</string>
+    <string name="no_connected_device">No hay ningún dispositivo conectado por Bluetooth.</string>
+    <string name="lvEmptyBluetoothList">No se han detectado dispositivos.</string>
+    <string name="BluetoothOnOffLabel">Bluetooth</string>
+    <string name="EastDirection">Este</string>
+    <string name="WestDirection">Oeste</string>
+    <string name="NorthDirection">Norte</string>
+    <string name="SouthDirection">Sur</string>
+    <string name="NorthWestDirection">Noroeste</string>
+    <string name="NorthEastDirection">Noreste</string>
+    <string name="SouthWestDirection">Suroeste</string>
+    <string name="SouthEastDirection">Sureste</string>
+    <string name="title_activity_joystick">MessiBOT</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="not_log_in">No se pudo iniciar sesión</string>
+    <string name="log_out">Log Out</string>
+    <string name="revoke">Revoke</string>
+    <string name="not_close_session">No se pudo cerrar sesión</string>
+    <string name="not_revoke">No se pudo revocar el acceso</string>
+    <string name="not_firebase_auth">No se pudo autenticar con Firebase</string>
+
+</resources>
