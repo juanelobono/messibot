@@ -2,6 +2,9 @@
     <string name="app_name">MessiBot</string>
     <string name="enable_bluetooth_canceled">El bluetooth no está activado. Active el Bluetooth para poder jugar.</string>
     <string name="no_connected_device">No hay ningún dispositivo conectado por Bluetooth.</string>
+
+    <string name="bluetooth_disabled">El bluetooth no está encendido.</string>
+
     <string name="lvEmptyBluetoothList">No se han detectado dispositivos.</string>
     <string name="BluetoothOnOffLabel">Bluetooth</string>
     <string name="EastDirection">Este</string>

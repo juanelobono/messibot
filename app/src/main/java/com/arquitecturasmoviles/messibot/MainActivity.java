@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d(TAG, "onDestroy: llamado.");
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver1);
-//      broadcast de Permitir visibilidad: nunca se registra por eso no se puede desuscribir.
-//      unregisterReceiver(mBroadcastReceiver2);
         unregisterReceiver(mBroadcastReceiver3);
         unregisterReceiver(mBroadcastReceiver4);
 
@@ -66,15 +64,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Validar conexion con equipo remoto para pasar a la activity de joystick
-//                if(mBluetoothAdapter.getBondedDevices().size() > 0){
-                Intent intent = new Intent(MainActivity.this, JoystickActivity.class);
-                startActivity(intent);
-//                }else{
-//                    //El usuario cancela el permiso a habilitar el bluetooth.
-//                    Toast.makeText(MainActivity.this, R.string.no_connected_device,
-//                            Toast.LENGTH_LONG).show();
-//                }
+                if (mBluetoothAdapter.isEnabled()){
+                    if(mBTDevice != null && mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED){
+                        Intent intent = new Intent(MainActivity.this, JoystickActivity.class);
+                        intent.putExtra(BluetoothDevice.EXTRA_DEVICE, mBTDevice);
+                        startActivity(intent);
+                    }else{
+                        //El usuario cancela el permiso a habilitar el bluetooth.
+                        Toast.makeText(MainActivity.this, R.string.no_connected_device,
+                                Toast.LENGTH_LONG).show();
+                   }
+                }else {
+                    //No esta conectado el bluetooth.
+                    Toast.makeText(MainActivity.this, R.string.bluetooth_disabled,
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -267,6 +271,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //caso1: ya está enlazado
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
+                    //Conexión establecida.
+                    Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + mDevice.getName(),
+                            Toast.LENGTH_LONG).show();
                 }
                 //caso2: creación de un vínculo
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -292,17 +299,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mBluetoothConnection.startClient(device,uuid);
     }
 
-    public void btnEnableDisable_Discoverable(View view) {
-        Log.d(TAG, "btnEnableDisable_Discoverable: Hace al dispositivo visible por 300 segundos.");
-
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-        startActivity(discoverableIntent);
-
-        IntentFilter intentFilter = new IntentFilter(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        registerReceiver(mBroadcastReceiver2,intentFilter);
-
-    }
     public void discoverBTDevices() {
         Log.d(TAG, "btnDiscover: Búsqueda de dispositivos no emparejados.");
 

@@ -1,5 +1,10 @@
 package com.arquitecturasmoviles.messibot;
 
+import android.util.ArraySet;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class ChainBuilder {
 
     public static final int START_CHAIN = 0x7E;
@@ -11,17 +16,20 @@ public class ChainBuilder {
     public byte[] makeChain(int frameType, byte[] data) {
         byte[] mbsLbs = BytesUtility.getMSBandLSB(data);
 
-        byte[] chain = {START_CHAIN, mbsLbs[0], mbsLbs[1] };
+        byte[] chain = new byte[] {START_CHAIN, mbsLbs[0], mbsLbs[1] };
+        ArrayList<Byte> chain2 = new ArrayList<Byte>();
+        chain2.add((byte)START_CHAIN);
+        chain2.add(mbsLbs[0]);
+        chain2.add(mbsLbs[1]);
+        chain2.add((byte)frameType);
 
-        for (int i = 0; i <= data.length; i++) {
-            chain[chain.length + 1] = data[i];
+        for (int i = 0; i < data.length; i++) {
+            chain2.add(data[i]);
         }
-
-        data[data.length + 1] = (byte) frameType;
 
         int checkSum = this.checkSum.CalculateCheckSum(data);
 
-        chain[chain.length + 1] = (byte) checkSum;
+        chain2.add((byte) checkSum);
 
         return chain;
     }
