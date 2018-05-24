@@ -21,5 +21,8 @@
     <string name="not_close_session">No se pudo cerrar sesión</string>
     <string name="not_revoke">No se pudo revocar el acceso</string>
     <string name="not_firebase_auth">No se pudo autenticar con Firebase</string>
+    <string name="facebook_app_id">2002775626707071</string>
+    <string name="fb_login_protocol_scheme">fb2002775626707071</string>
+
 
 </resources>

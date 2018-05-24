@@ -82,34 +82,46 @@
         <ListView
             android:id="@+id/lvNewDevices"
             android:layout_width="301dp"
-            android:layout_height="444dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="316dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff"
-            app:layout_constraintVertical_bias="0.173" />
+            app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff" />
 
-        <Button
-            android:id="@+id/btnPlay"
-            android:layout_width="150sp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:width="40sp"
-            android:background="@color/colorAccent"
-            android:text="Jugar"
-            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lvNewDevices" />
+            app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintVertical_bias="0.949">
+
+            <Button
+                android:id="@+id/btnPlay"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:width="40sp"
+                android:background="@color/colorAccent"
+                android:text="Jugar"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lvNewDevices" />
+        </LinearLayout>
+
 
     </android.support.constraint.ConstraintLayout>
 

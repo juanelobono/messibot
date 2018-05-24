@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="5dp">
 
-    <ImageView android:src="@drawable/logo"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginBottom="24dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginTop="20dp"
+        android:src="@drawable/logo" />
 
     <TextView
         android:id="@+id/textView"
@@ -31,7 +35,7 @@
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/etPassword"
+        android:id="@+id/etNewPass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -48,17 +52,8 @@
         android:text="Registrarse"
         android:textColor="@android:color/white" />
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@color/colorAccent"
-        android:text="Ingresar"
-        android:textColor="@android:color/white" />
-
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/btnSingIn"
+        android:id="@+id/btnSingInGoogle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -73,5 +68,25 @@
         android:layout_centerVertical="true"
         android:layout_marginTop="10dp"
         android:visibility="gone" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btnLoginFacebook"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingEnd="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp" />
+
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="¿Tienes una cuenta? Entrar" />
+
 
 </LinearLayout>
