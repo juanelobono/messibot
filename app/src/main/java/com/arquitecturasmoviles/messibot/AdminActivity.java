@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -40,34 +41,41 @@ public class AdminActivity extends AppCompatActivity {
         arrayPass.add("987654");
         arrayPass.add("564738");
         arrayPass.add("837465");
+        arrayPass.add("091256");
+        arrayPass.add("506932");
 
         btnNewPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Random random = new Random();
-                int index = random.nextInt(arrayPass.size());
-                String password = arrayPass.get(index);
+                if(!TextUtils.isEmpty(etNewPass.getText().toString())) {
+                    Random random = new Random();
+                    int index = random.nextInt(arrayPass.size());
+                    String password = arrayPass.get(index);
 
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(AdminActivity.this);
-                View mView = getLayoutInflater().inflate(R.layout.activity_show_password, null);
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(AdminActivity.this);
+                    View mView = getLayoutInflater().inflate(R.layout.activity_show_password, null);
 
-                final TextView tvShowPassword = mView.findViewById(R.id.tvShowPassword);
-                tvShowPassword.setText(password);
-                Button btnAceptar = mView.findViewById(R.id.btnAceptar);
+                    final TextView tvShowPassword = mView.findViewById(R.id.tvShowPassword);
+                    tvShowPassword.setText(password);
+                    Button btnAceptar = mView.findViewById(R.id.btnAceptar);
 
-                btnAceptar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
+                    btnAceptar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                           public void onClick(View view) {
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    mBuilder.setView(mView);
+                    AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+
+                } else {
+                    Toast.makeText(AdminActivity.this, "Ingrese una contraseña",
+                            Toast.LENGTH_SHORT).show();
                     }
-                });
-
-                mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
-                dialog.show();
-
             }
         });
 
