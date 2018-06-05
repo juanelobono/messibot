@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "614336076275",
+    "firebase_url": "https://messibot-c8820.firebaseio.com",
+    "project_id": "messibot-c8820",
+    "storage_bucket": "messibot-c8820.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614336076275:android:2a59d2331e9b4cb5",
+        "android_client_info": {
+          "package_name": "com.arquitecturasmoviles.messibot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "614336076275-81h0vb3dal2g77g97udj6a0kujm3bps9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.arquitecturasmoviles.messibot",
+            "certificate_hash": "2c74908d09ee93e1516823dcef62310792f6f457"
+          }
+        },
+        {
+          "client_id": "614336076275-blsubgg0gmclnrg8ps21mv4g20oss21o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRTTvZJfSqvp2VR1mMRhukZLp_KfUxx3k"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "614336076275-blsubgg0gmclnrg8ps21mv4g20oss21o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

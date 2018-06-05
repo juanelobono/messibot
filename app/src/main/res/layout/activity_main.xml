@@ -1,105 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="0dp"
-    tools:context=".MainActivity">
+    android:id="@+id/drawer"
+    tools:context="com.arquitecturasmoviles.messibot.MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/tbSwitchBluetoothOnOff"
+    <!-- CONTENIDO PRINCIPAL -->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="78dp"
+        android:layout_height="match_parent"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp">
 
-        android:background="@color/white"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvBluetoothSwitch"
-        android:layout_width="131dp"
-        android:layout_height="29dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/BluetoothOnOffLabel"
-        android:textColor="@color/backgroundColorSplash"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintStart_toStartOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintTop_toTopOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintVertical_bias="0.482" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tbSwitchBluetoothOnOff"
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
 
-    <Switch
-        android:id="@+id/swOnOffBluetooh"
+            android:background="@color/white"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvBluetoothSwitch"
+            android:layout_width="131dp"
+            android:layout_height="29dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/BluetoothOnOffLabel"
+            android:textColor="@color/backgroundColorSplash"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintStart_toStartOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintTop_toTopOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintVertical_bias="0.482" />
+
+        <Switch
+            android:id="@+id/swOnOffBluetooh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:switchPadding="15dp"
+            android:textOff="No"
+            android:textOn="Sí"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintEnd_toEndOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintHorizontal_bias="0.851"
+            app:layout_constraintStart_toEndOf="@+id/tvBluetoothSwitch"
+            app:layout_constraintTop_toTopOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintVertical_bias="0.451" />
+
+
+        <TextView
+            android:id="@+id/tvEmptyListViewBluetooth"
+            android:layout_width="211dp"
+            android:layout_height="50dp"
+            android:foregroundGravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="@string/lvEmptyBluetoothList"
+            android:textColor="@color/gray"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintVertical_bias="0.506" />
+
+        <ListView
+            android:id="@+id/lvNewDevices"
+            android:layout_width="301dp"
+            android:layout_height="316dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff"
+            app:layout_constraintVertical_bias="0.949">
+
+            <Button
+                android:id="@+id/btnPlay"
+                android:layout_width="150sp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:width="40sp"
+                android:background="@color/colorAccent"
+                android:text="Jugar"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lvNewDevices" />
+        </LinearLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <!-- BARRA LATERAL -->
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:switchPadding="15dp"
-        android:textOff="No"
-        android:textOn="Sí"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintEnd_toEndOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintHorizontal_bias="0.851"
-        app:layout_constraintStart_toEndOf="@+id/tvBluetoothSwitch"
-        app:layout_constraintTop_toTopOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintVertical_bias="0.451" />
+        android:layout_height="match_parent"
+        app:menu="@menu/navigation_menu"
+        android:layout_gravity="start">
+    </android.support.design.widget.NavigationView>
 
 
-    <TextView
-        android:id="@+id/tvEmptyListViewBluetooth"
-        android:layout_width="211dp"
-        android:layout_height="50dp"
-        android:foregroundGravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:text="@string/lvEmptyBluetoothList"
-        android:textColor="@color/gray"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintVertical_bias="0.506" />
-
-    <ListView
-        android:id="@+id/lvNewDevices"
-        android:layout_width="301dp"
-        android:layout_height="444dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tbSwitchBluetoothOnOff"
-        app:layout_constraintVertical_bias="0.173" />
-
-    <Button
-        android:id="@+id/btnPlay"
-        android:layout_width="150sp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:width="40sp"
-        android:background="@color/colorAccent"
-        android:text="Jugar"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lvNewDevices" />
-</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.DrawerLayout>
