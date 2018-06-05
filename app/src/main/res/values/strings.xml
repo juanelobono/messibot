@@ -13,5 +13,15 @@
     <string name="SouthWestDirection">Suroeste</string>
     <string name="SouthEastDirection">Sureste</string>
     <string name="title_activity_joystick">MessiBOT</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="not_log_in">No se pudo iniciar sesión</string>
+    <string name="log_out">Log Out</string>
+    <string name="revoke">Revoke</string>
+    <string name="not_close_session">No se pudo cerrar sesión</string>
+    <string name="not_revoke">No se pudo revocar el acceso</string>
+    <string name="not_firebase_auth">No se pudo autenticar con Firebase</string>
+    <string name="facebook_app_id">2002775626707071</string>
+    <string name="fb_login_protocol_scheme">fb2002775626707071</string>
 
 </resources>

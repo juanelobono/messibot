@@ -6,26 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".JoystickActivity">
 
-
-
-    <!--<io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"-->
-    <!--android:id="@+id/joystick"-->
-    <!--android:layout_width="303dp"-->
-    <!--android:layout_height="314dp"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:background="@drawable/base_joystick"-->
-    <!--custom:JV_buttonImage="@drawable/palanca_joystick"-->
-    <!--custom:JV_fixedCenter="true"-->
-    <!--custom:layout_constraintBottom_toBottomOf="parent"-->
-    <!--custom:layout_constraintEnd_toEndOf="parent"-->
-    <!--custom:layout_constraintHorizontal_bias="0.402"-->
-    <!--custom:layout_constraintStart_toStartOf="parent"-->
-    <!--custom:layout_constraintTop_toTopOf="parent" />-->
-
     <io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:id="@+id/joystick"
         android:layout_width="288dp"
@@ -42,10 +22,9 @@
         custom:JV_buttonColor="#ffe100"
         custom:layout_constraintBottom_toBottomOf="parent"
         custom:layout_constraintEnd_toEndOf="parent"
-        custom:layout_constraintHorizontal_bias="0.322"
         custom:layout_constraintStart_toStartOf="parent"
         custom:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        custom:layout_constraintVertical_bias="0.048" />
+        custom:layout_constraintVertical_bias="0.051" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
