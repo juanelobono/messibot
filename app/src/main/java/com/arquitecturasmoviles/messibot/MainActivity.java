@@ -349,6 +349,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d(TAG, "checkBTPermissions: No es necesario comprobar los permisos. Versión SDK < LOLLIPOP.");
         }
     }
+
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         //primero cancela el descubrimiento porque es muy intensivo en memoria.
