@@ -1,6 +1,5 @@
 package com.arquitecturasmoviles.messibot;
 
-
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -20,7 +19,6 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -28,6 +26,7 @@ import static android.os.Build.*;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+
     private static final String TAG = "MainActivity";
     private static final int ENABLE_BLUETOOTH_REQUEST_CODE = 1;
     BluetoothAdapter mBluetoothAdapter;
