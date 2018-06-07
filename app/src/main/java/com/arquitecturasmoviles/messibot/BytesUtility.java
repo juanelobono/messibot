@@ -5,11 +5,11 @@ public final class BytesUtility {
 
     }
 
-    public static byte[] getMSBandLSB(byte[] data){
-        int length = data.length;
-        byte[] Bytes = new byte[2];
-        Bytes[1] = (byte) (length & 0xFF);           // Least Significant Byte
-        Bytes[0] = (byte) ((length & 0xFF00) >> 8);  // Most Significan Byte
+    public static int[] getMSBandLSB(int[] data){
+        int length = data.length + 1;
+        int[] Bytes = new int[2];
+        Bytes[1] = (length & 0xFF);           // Least Significant Byte
+        Bytes[0] = ((length & 0xFF00) >> 8);  // Most Significan Byte
         return Bytes;
     }
 }

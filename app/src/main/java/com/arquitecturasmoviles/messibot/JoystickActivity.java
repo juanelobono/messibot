@@ -6,11 +6,17 @@ import android.bluetooth.BluetoothSocket;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v4.content.res.TypedArrayUtils;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
@@ -76,31 +82,56 @@ public class JoystickActivity extends Activity {
             public void onMove(int angle, int strength) {
                 tvDirection.setText(getButtonDirection(angle).toString());
                 cb = new ChainBuilder();
-                byte[] data = null;
+                List<Integer> data = null;
                 try{
                     switch(getButtonDirection(angle))
                     {
                         case TOP:
+                            int[] strengArrayTop = new int[] {strength};
+                            ArrayList<String> arrayBytesTop = new ArrayList<>();
+
+                            data = cb.makeChain(FrameType.PROGRESS.getValue(), strengArrayTop);
+                            int[] dataArrayIntegerTop = convertIntegers(data);
+                            byte[] dataToByteTop = getByteArray(dataArrayIntegerTop);
+
+                            sendDataService.write(dataToByteTop);
                             break;
                         case LEFT:
+                            int[] strengArrayLeft = new int[] {strength};
+                            ArrayList<String> arrayBytesLeft = new ArrayList<>();
+
+                            data = cb.makeChain(FrameType.LEFT.getValue(), strengArrayLeft);
+                            int[] dataArrayIntegerLeft = convertIntegers(data);
+                            byte[] dataToByteLeft = getByteArray(dataArrayIntegerLeft);
+
+                            sendDataService.write(dataToByteLeft);
                             break;
                         case RIGHT:
+                            int[] strengArrayRigth = new int[] {strength};
+                            ArrayList<String> arrayBytesRigth = new ArrayList<>();
+
+                            data = cb.makeChain(FrameType.RIGHT.getValue(), strengArrayRigth);
+                            int[] dataArrayIntegerRigth = convertIntegers(data);
+                            byte[] dataToByteRigth = getByteArray(dataArrayIntegerRigth);
+
+                            sendDataService.write(dataToByteRigth);
                             break;
                         case BOTTOM:
+                            int[] strengArrayBack = new int[] {strength};
 
+                            data = cb.makeChain(FrameType.BACK.getValue(), strengArrayBack);
+                            int[] dataArrayIntegerBack = convertIntegers(data);
+                            byte[] dataToByteBack = getByteArray(dataArrayIntegerBack);
+
+                            sendDataService.write(dataToByteBack);
                             break;
                         case TOP_LEFT:
-                            sendDataService.write(tramaIzquieda);
                             break;
                         case TOP_RIGHT:
-                            sendDataService.write(tramaDerecha);
                             break;
                         case BOTTOM_LEFT:
-                            data = cb.makeChain(FrameType.CHANGE_PASSWORD.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
-                          sendDataService.write(data);
                             break;
                         case BOTTOM_RIGHT:
-//                            sendDataService.write(tramaAdelante);
                             break;
                     }
 
@@ -109,8 +140,6 @@ public class JoystickActivity extends Activity {
                     e.printStackTrace();
                 }
 
-
-
                 tvAngle.setText(angle + "º");
                 tvStrength.setText(getStrengthToDecimal(strength) + " en decimal.");
             }
@@ -118,7 +147,42 @@ public class JoystickActivity extends Activity {
 
     }
 
+    private static int[] convertIntegers(List<Integer> integers)
+    {
+        int[] ret = new int[integers.size()];
+        for (int i=0; i < ret.length; i++)
+        {
+            ret[i] = integers.get(i);
+        }
+        return ret;
+    }
 
+    private static byte[] convertToByte(int[] ints)
+    {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(ints.length * 4);
+        IntBuffer intBuffer = byteBuffer.asIntBuffer();
+        intBuffer.put(ints);
+
+        byte[] arrayBytes = byteBuffer.array();
+
+        return arrayBytes;
+    }
+
+
+    public byte[] getByteArray(int[] array) {
+        byte[] bytes = new byte[array.length];
+
+        for(int i = 0; i < array.length ; i++) {
+            bytes[i] =(byte) array[i];
+        }
+
+        return  bytes;
+    }
+
+    public static int convert(int number)
+    {
+        return Integer.valueOf(String.valueOf(number), 16);
+    }
 
     public int getStrengthToDecimal(int strength){
         //MAX_STRENGTH = 100%

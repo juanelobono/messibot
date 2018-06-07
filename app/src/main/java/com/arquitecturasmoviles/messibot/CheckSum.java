@@ -1,18 +1,25 @@
 package com.arquitecturasmoviles.messibot;
 
 public class CheckSum {
-    int CalculateCheckSum(byte[] bytes) {
-        int CheckSum = 0, i = 0;
+    int CalculateCheckSum(int[] bytes) {
+        int checkSum = 0, check = 0;
 
-        for( i = 0; i < bytes.length; i++){
-            CheckSum += bytes[i];
+        for(int i = 0; i < bytes.length; i++){
+            checkSum += bytes[i];
         }
 
-        if (CheckSum > 255) {
-            CheckSum = 255 - (CheckSum & 0xFF);
-            return CheckSum;
+        if (checkSum > 255) {
+            checkSum = 255 - (checkSum & 0xFF);
+            check = checkSum;
+        } else {
+            check = 255 - checkSum;
         }
 
-        return 255 - CheckSum;
+        return check;
+    }
+
+    public static int convert(int number)
+    {
+        return Integer.valueOf(String.valueOf(number), 16);
     }
 }
