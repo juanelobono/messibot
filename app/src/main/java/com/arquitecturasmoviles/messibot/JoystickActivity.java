@@ -146,7 +146,7 @@ public class JoystickActivity extends Activity {
                         tvStrength.setText(getStrengthToDecimal(strength) + " en decimal.");
                     }
                 },
-                500
+                200
         );
     }
 

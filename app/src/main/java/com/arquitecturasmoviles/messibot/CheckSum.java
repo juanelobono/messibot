@@ -2,10 +2,10 @@ package com.arquitecturasmoviles.messibot;
 
 public class CheckSum {
     int CalculateCheckSum(int[] bytes) {
-        int checkSum = 0, check = 0;
+        int checkSum = 0, check;
 
-        for (int i = 0; i < bytes.length; i++){
-            checkSum += bytes[i];
+        for (int aByte : bytes) {
+            checkSum += aByte;
         }
 
         if (checkSum > 255) {
