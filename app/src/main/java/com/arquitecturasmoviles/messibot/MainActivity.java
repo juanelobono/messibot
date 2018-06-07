@@ -27,6 +27,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,6 +83,8 @@ public class MainActivity extends AppCompatActivity
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        final String playPass = getIntent().getStringExtra("PLAY_PASS");
+
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if(currentUser == null) {
@@ -104,8 +107,53 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(View view) {
                     // TODO: Validar conexion con equipo remoto para pasar a la activity de joystick
 //                if(mBluetoothAdapter.getBondedDevices().size() > 0){
-                    Intent intent = new Intent(MainActivity.this, JoystickActivity.class);
-                    startActivity(intent);
+
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                    View mView = getLayoutInflater().inflate(R.layout.activity_play, null);
+
+                    /*final EditText etPlayPass = mView.findViewById(R.id.etPlayPass);
+                    Button btnPlayPass = mView.findViewById(R.id.btnPlayPass);
+
+                    btnPlayPass.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(etPlayPass.getText().toString().equals(playPass)){
+                                Toast.makeText(MainActivity.this, "A jugar!!!",
+                                        Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), JoystickActivity.class);
+                                startActivity(intent);
+                            }
+                            else{
+                                Toast.makeText(MainActivity.this, "Contraseña incorrecta",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });*/
+                    final EditText etNewPass = mView.findViewById(R.id.etNewPass);
+                    Button btnNewPass = mView.findViewById(R.id.btnNewPass);
+
+                    btnNewPass.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(etNewPass.getText().toString().equals(playPass)){
+                                Toast.makeText(MainActivity.this, "A jugar!!!",
+                                        Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), JoystickActivity.class);
+                                startActivity(intent);
+                            }
+                            else{
+                                Toast.makeText(MainActivity.this, "Contraseña incorrecta",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+
+                    mBuilder.setView(mView);
+                    AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+
 //                }else{
 //                    //El usuario cancela el permiso a habilitar el bluetooth.
 //                    Toast.makeText(MainActivity.this, R.string.no_connected_device,
@@ -155,6 +203,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
             );
+
 
         }
 
