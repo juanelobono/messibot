@@ -118,12 +118,64 @@ public class JoystickActivity extends Activity {
                                     sendDataService.write(dataToByteBack);
                                     break;
                                 case TOP_LEFT:
+                                    int[] strengthArrayTopLeft = new int[] {strength};
+
+                                    chainData = chainBuilder.makeChain(FrameType.PROGRESS.getValue(), strengthArrayTopLeft);
+                                    int[] dataArrayIntegerForTopLeftChain = convertIntegers(chainData);
+                                    byte[] dataToByteTopLeft = getChainTransform(dataArrayIntegerForTopLeftChain);
+
+                                    sendDataService.write(dataToByteTopLeft);
+
+                                    chainData = chainBuilder.makeChain(FrameType.LEFT.getValue(), strengthArrayTopLeft);
+                                    dataArrayIntegerForBackChain = convertIntegers(chainData);
+                                    dataToByteBack = getChainTransform(dataArrayIntegerForBackChain);
+
+                                    sendDataService.write(dataToByteBack);
                                     break;
                                 case TOP_RIGHT:
+                                    int[] strengthArrayTopRight = new int[] {strength};
+
+                                    chainData = chainBuilder.makeChain(FrameType.PROGRESS.getValue(), strengthArrayTopRight);
+                                    int[] dataArrayIntegerForTopRightChain = convertIntegers(chainData);
+                                    byte[] dataToByteTopRight = getChainTransform(dataArrayIntegerForTopRightChain);
+
+                                    sendDataService.write(dataToByteTopRight);
+
+                                    chainData = chainBuilder.makeChain(FrameType.RIGHT.getValue(), strengthArrayTopRight);
+                                    dataArrayIntegerForTopRightChain = convertIntegers(chainData);
+                                    dataToByteTopRight = getChainTransform(dataArrayIntegerForTopRightChain);
+
+                                    sendDataService.write(dataToByteTopRight);
                                     break;
                                 case BOTTOM_LEFT:
+                                    int[] strengthArrayBottomLeft = new int[] {strength};
+
+                                    chainData = chainBuilder.makeChain(FrameType.BACK.getValue(), strengthArrayBottomLeft);
+                                    int[] dataArrayIntegerForBottomLeftChain = convertIntegers(chainData);
+                                    byte[] dataToByteBottomLeft = getChainTransform(dataArrayIntegerForBottomLeftChain);
+
+                                    sendDataService.write(dataToByteBottomLeft);
+
+                                    chainData = chainBuilder.makeChain(FrameType.LEFT.getValue(), strengthArrayBottomLeft);
+                                    dataArrayIntegerForBottomLeftChain = convertIntegers(chainData);
+                                    dataToByteBottomLeft = getChainTransform(dataArrayIntegerForBottomLeftChain);
+
+                                    sendDataService.write(dataToByteBottomLeft);
                                     break;
                                 case BOTTOM_RIGHT:
+                                    int[] strengthArrayBottomRight = new int[] {strength};
+
+                                    chainData = chainBuilder.makeChain(FrameType.BACK.getValue(), strengthArrayBottomRight);
+                                    int[] dataArrayIntegerForBottomRightChain = convertIntegers(chainData);
+                                    byte[] dataToByteBottomRight = getChainTransform(dataArrayIntegerForBottomRightChain);
+
+                                    sendDataService.write(dataToByteBottomRight);
+
+                                    chainData = chainBuilder.makeChain(FrameType.RIGHT.getValue(), strengthArrayBottomRight);
+                                    dataArrayIntegerForBottomRightChain = convertIntegers(chainData);
+                                    dataToByteBottomRight = getChainTransform(dataArrayIntegerForBottomRightChain);
+
+                                    sendDataService.write(dataToByteBottomRight);
                                     break;
                             }
                         } catch (IOException e) {
