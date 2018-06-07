@@ -29,7 +29,8 @@ public class JoystickActivity extends Activity {
         TOP_LEFT,
         TOP_RIGHT,
         BOTTOM_LEFT,
-        BOTTOM_RIGHT
+        BOTTOM_RIGHT,
+        CENTER
     }
 
     BluetoothAdapter mBluetoothAdapter;
@@ -66,7 +67,6 @@ public class JoystickActivity extends Activity {
 
         try {
             sendDataService = new SendDataService(mBTDevice);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,75 +74,97 @@ public class JoystickActivity extends Activity {
         joystick.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                tvDirection.setText(getButtonDirection(angle).toString());
+                tvDirection.setText(getButtonDirection(angle, getStrengthToDecimal(strength)).toString());
                 cb = new ChainBuilder();
                 byte[] data = null;
                 try{
-                    switch(getButtonDirection(angle))
+                    switch(getButtonDirection(angle, getStrengthToDecimal(strength)))
                     {
                         case TOP:
+                            data = cb.makeChain(FrameType.PROGRESS.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                         case LEFT:
+                            data = cb.makeChain(FrameType.LEFT.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                         case RIGHT:
+                            data = cb.makeChain(FrameType.RIGHT.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                         case BOTTOM:
-
+                            data = cb.makeChain(FrameType.BACK.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                         case TOP_LEFT:
-                            sendDataService.write(tramaIzquieda);
+                            data = cb.makeChain(FrameType.PROGRESS.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
+                            data = cb.makeChain(FrameType.LEFT.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                         case TOP_RIGHT:
-                            sendDataService.write(tramaDerecha);
+                            data = cb.makeChain(FrameType.PROGRESS.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
+                            data = cb.makeChain(FrameType.RIGHT.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                         case BOTTOM_LEFT:
-                            data = cb.makeChain(FrameType.CHANGE_PASSWORD.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
-                          sendDataService.write(data);
+                            data = cb.makeChain(FrameType.BACK.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
+                            data = cb.makeChain(FrameType.LEFT.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                         case BOTTOM_RIGHT:
-//                            sendDataService.write(tramaAdelante);
+                            data = cb.makeChain(FrameType.BACK.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
+                            data = cb.makeChain(FrameType.RIGHT.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
+                            break;
+                        case CENTER:
+                            data = cb.makeChain(FrameType.STOP.getValue(), HexUtility.convertIntegerToHexadecimal(strength).getBytes());
+                            sendDataService.write(data);
                             break;
                     }
-
                 }catch (IOException e){
-
                     e.printStackTrace();
                 }
-
-
 
                 tvAngle.setText(angle + "º");
                 tvStrength.setText(getStrengthToDecimal(strength) + " en decimal.");
             }
-        }, 500);
+        }, 150);
 
     }
 
 
 
     public int getStrengthToDecimal(int strength){
-        //MAX_STRENGTH = 100%
-        //MIN_STRENGTH = 0&
         //Se obtiene el decimal de 0 a 255 por regla de 3 simple.
         return (int) Math.ceil((strength * MAX_STRENGTH) / 100);
 
     }
 
-    private DIRECTION getButtonDirection (int angle){
+    private DIRECTION getButtonDirection (int angle, int strength){
         DIRECTION direction = null;
-        if (angle == 0){
-            direction = DIRECTION.RIGHT;
-        }else if(angle > 0 && angle < 90) {
+        if ((angle >= 0 && angle <= 30) || angle >= 330){
+            if (strength == 0) {
+                direction = DIRECTION.CENTER;
+            }else{
+                direction = DIRECTION.RIGHT;
+            }
+        }else if(angle > 30 && angle < 60) {
+            direction = DIRECTION.TOP_RIGHT;
+        }else if(angle >= 60 && angle <= 120) {
             direction = DIRECTION.TOP;
-        }else if(angle > 90 && angle < 180 ){
+        }else if(angle > 120 && angle < 150 ){
             direction = DIRECTION.TOP_LEFT;
-        }else if(angle  == 180 ){
+        }else if(angle >= 150 && angle <= 210 ){
             direction = DIRECTION.LEFT;
-        }else if(angle > 180 && angle < 270 ){
+        }else if(angle >  210 && angle < 240 ){
             direction = DIRECTION.BOTTOM_LEFT;
-        }else if(angle == 270 ){
+        }else if(angle >= 240 && angle <= 300 ){
             direction = DIRECTION.BOTTOM;
-        }else if(angle > 270 && angle < 360 ){
+        }else if(angle > 300 && angle < 330 ){
             direction = DIRECTION.BOTTOM_RIGHT;
         }
 

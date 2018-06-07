@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final int ENABLE_BLUETOOTH_REQUEST_CODE = 1;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothConnectionService mBluetoothConnection;
-    //Button btnStartConnection;
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -50,9 +48,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         unregisterReceiver(mBroadcastReceiver1);
         unregisterReceiver(mBroadcastReceiver3);
         unregisterReceiver(mBroadcastReceiver4);
-
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View view) {
                 if (mBluetoothAdapter.isEnabled()){
-                    if(mBTDevice != null && mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED){
+                    if(mBTDevice != null && mBTDevice.getBondState() == mBTDevice.BOND_BONDED){
                         Intent intent = new Intent(MainActivity.this, JoystickActivity.class);
                         intent.putExtra(BluetoothDevice.EXTRA_DEVICE, mBTDevice);
                         startActivity(intent);
@@ -102,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (mBluetoothAdapter.isEnabled()){
             discoverBTDevices();
         }
-
 
         swOnOffBluetooth.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -141,8 +136,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (resultCode == RESULT_OK){
 
                 }
-                break;
-            default: super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
     }
@@ -271,9 +264,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //caso1: ya está enlazado
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
-                    //Conexión establecida.
-                    Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + mDevice.getName(),
-                            Toast.LENGTH_LONG).show();
+
                 }
                 //caso2: creación de un vínculo
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -287,17 +278,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     };
 
-    //crear método para iniciar la conexión
-    //la conexión fallará y la aplicación se bloqueará si no hiciste el emparejamiento primero
-    public void startConnection(){
-        startBTConnection(mBTDevice,MY_UUID_INSECURE);
-    }
-
-    public void startBTConnection(BluetoothDevice device, UUID uuid){
-        Log.d(TAG, "startBTConnection: Inicialización de la conexión Bluetooth RFCOM.");
-
-        mBluetoothConnection.startClient(device,uuid);
-    }
 
     public void discoverBTDevices() {
         Log.d(TAG, "btnDiscover: Búsqueda de dispositivos no emparejados.");
@@ -362,10 +342,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //NOTA: Requiere API 17 (JellyBean)
         if(VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2){
             Log.d(TAG, "Tratando de emparejarse con " + deviceName);
-            mBTDevices.get(i).createBond();
-
             mBTDevice = mBTDevices.get(i);
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
+            if (mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED){ // Si ya se emparejó el dispositivo alguna vez
+                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
+                //Conexión establecida.
+                Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + deviceName,
+                        Toast.LENGTH_LONG).show();
+            } else{
+                mBTDevice.createBond();
+                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
+            }
         }
     }
 }
