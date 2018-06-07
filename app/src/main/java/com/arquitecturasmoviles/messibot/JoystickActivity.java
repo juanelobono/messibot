@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothSocket;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +16,19 @@ import java.io.IOException;
 import java.util.UUID;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
+import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import io.github.controlwear.virtual.joystick.android.JoystickView;
+import static android.content.ContentValues.TAG;
 
 public class JoystickActivity extends Activity {
 
@@ -45,6 +60,9 @@ public class JoystickActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_joystick);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -70,6 +88,7 @@ public class JoystickActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         joystick.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
@@ -136,38 +155,80 @@ public class JoystickActivity extends Activity {
 
     }
 
-
-
     public int getStrengthToDecimal(int strength){
         //Se obtiene el decimal de 0 a 255 por regla de 3 simple.
         return (int) Math.ceil((strength * MAX_STRENGTH) / 100);
 
     }
 
-    private DIRECTION getButtonDirection (int angle, int strength){
+    private DIRECTION getButtonDirection (int angle, int strength) {
         DIRECTION direction = null;
-        if ((angle >= 0 && angle <= 30) || angle >= 330){
+        if ((angle >= 0 && angle <= 30) || angle >= 330) {
             if (strength == 0) {
                 direction = DIRECTION.CENTER;
-            }else{
+            } else {
                 direction = DIRECTION.RIGHT;
             }
-        }else if(angle > 30 && angle < 60) {
+        } else if (angle > 30 && angle < 60) {
             direction = DIRECTION.TOP_RIGHT;
-        }else if(angle >= 60 && angle <= 120) {
+        } else if (angle >= 60 && angle <= 120) {
             direction = DIRECTION.TOP;
-        }else if(angle > 120 && angle < 150 ){
+        } else if (angle > 120 && angle < 150) {
             direction = DIRECTION.TOP_LEFT;
-        }else if(angle >= 150 && angle <= 210 ){
+        } else if (angle >= 150 && angle <= 210) {
             direction = DIRECTION.LEFT;
-        }else if(angle >  210 && angle < 240 ){
+        } else if (angle > 210 && angle < 240) {
             direction = DIRECTION.BOTTOM_LEFT;
-        }else if(angle >= 240 && angle <= 300 ){
+        } else if (angle >= 240 && angle <= 300) {
             direction = DIRECTION.BOTTOM;
-        }else if(angle > 300 && angle < 330 ){
+        } else if (angle > 300 && angle < 330) {
             direction = DIRECTION.BOTTOM_RIGHT;
         }
 
         return direction;
+
+    }
+
+    /*
+     *   Esta clase está destinada a utilizarse de cronómetro para la terminación automática y asíncrona
+     *   de conexiones bluetooth dados los milisegundos requeridos para que esta tarea se lleve a cabo.
+     *
+     * */
+    public final class Reminder {
+        Timer timer;
+
+        public Reminder(int milliseconds) {
+            timer = new Timer();
+            timer.schedule(new RemindTask(), milliseconds);
+        }
+
+        class RemindTask extends TimerTask {
+            public void run() {
+
+                Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+                if (pairedDevices.size() > 0) {
+                    for (BluetoothDevice device : pairedDevices) {
+                        try {
+                            Method m = device.getClass()
+                                    .getMethod("removeBond", (Class[]) null);
+                            m.invoke(device, (Object[]) null);
+                            Log.d(TAG, "Conexiones terminadas.");
+                        } catch (Exception e) {
+                            Log.e("Error terminación.", e.getMessage());
+                        }
+                    }
+                }
+
+                //  Terminar el hilo del timer
+                timer.cancel();
+            }
+        }
+    }
+
+    //  Este método permite desvincular las conexiones bluetooth pasada cierta cantidad de milisegundos
+    protected void terminateBluetoothConnection(int milliseconds)
+    {
+        Reminder reminder = new Reminder(milliseconds);
+        Toast.makeText(JoystickActivity.this, "Se desvincularán todos los dispositivos en " + milliseconds / 1000 + " segundos.", Toast.LENGTH_SHORT).show();
     }
 }
