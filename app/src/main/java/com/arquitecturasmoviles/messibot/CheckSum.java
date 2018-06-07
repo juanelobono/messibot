@@ -1,5 +1,7 @@
 package com.arquitecturasmoviles.messibot;
 
+import android.widget.Toast;
+
 public class CheckSum {
     int CalculateCheckSum(int[] bytes) {
         int checkSum = 0, check = 0;

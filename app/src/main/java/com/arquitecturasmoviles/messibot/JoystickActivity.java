@@ -3,19 +3,12 @@ package com.arquitecturasmoviles.messibot;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
-import android.support.v4.content.res.TypedArrayUtils;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +39,7 @@ public class JoystickActivity extends Activity {
     private TextView tvAngle;
     private TextView tvStrength;
     private SendDataService sendDataService;
-    private ChainBuilder cb;
+    private ChainBuilder chainBuilder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,11 +52,12 @@ public class JoystickActivity extends Activity {
         tvAngle = findViewById(R.id.tvAngle);
         tvStrength = findViewById(R.id.tvStrength);
 
-        final byte[] tramaIzquieda = new byte[]{(byte)0x7e, (byte)0x00, (byte)0x02,(byte)0x02, (byte)0xFD, (byte)0x00};
-        final byte[] tramaAtras = new byte[]{(byte)0x7e, (byte)0x00,(byte)0x02, (byte)0x01, (byte)0xFE, (byte)0x00};
-        final byte[] tramaDerecha = new byte[]{(byte)0x7e, (byte)0x00,(byte)0x02, (byte)0x03, (byte)0xFC, (byte)0x00};
-        final byte[] tramaAdelante = new byte[]{(byte)0x7e, (byte)0x00,(byte)0x02, (byte)0x04, (byte)0xFB, (byte)0x00};
-        byte[] tramaDetener = new byte[]{(byte)0x7e, (byte)0x00,(byte)0x02, (byte)0x04, (byte)0xFB, (byte)0x00};
+        /*
+         * final byte[] tramaAdelante = new byte[]{(byte)0x7e, (byte)0x00,(byte)0x02, (byte)0x04, (byte)0xFB, (byte)0x00};
+         * final byte[] tramaAtras = new byte[]{(byte)0x7e, (byte)0x00,(byte)0x02, (byte)0x01, (byte)0xFE, (byte)0x00};
+         * final byte[] tramaIzquieda = new byte[]{(byte)0x7e, (byte)0x00, (byte)0x02,(byte)0x02, (byte)0xFD, (byte)0x00};
+         * final byte[] tramaDerecha = new byte[]{(byte)0x7e, (byte)0x00,(byte)0x02, (byte)0x03, (byte)0xFC, (byte)0x00};
+         */
 
         mBTDevice = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
@@ -72,124 +66,102 @@ public class JoystickActivity extends Activity {
 
         try {
             sendDataService = new SendDataService(mBTDevice);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        joystick.setOnMoveListener(new JoystickView.OnMoveListener() {
-            @Override
-            public void onMove(int angle, int strength) {
-                tvDirection.setText(getButtonDirection(angle).toString());
-                cb = new ChainBuilder();
-                List<Integer> data = null;
-                try{
-                    switch(getButtonDirection(angle))
-                    {
-                        case TOP:
-                            int[] strengArrayTop = new int[] {strength};
-                            ArrayList<String> arrayBytesTop = new ArrayList<>();
+        joystick.setOnMoveListener(
+                new JoystickView.OnMoveListener() {
+                    @Override
+                    public void onMove(int angle, int strength) {
+                        tvDirection.setText(getButtonDirection(angle).toString());
 
-                            data = cb.makeChain(FrameType.PROGRESS.getValue(), strengArrayTop);
-                            int[] dataArrayIntegerTop = convertIntegers(data);
-                            byte[] dataToByteTop = getByteArray(dataArrayIntegerTop);
+                        chainBuilder = new ChainBuilder();
+                        List<Integer> chainData;
 
-                            sendDataService.write(dataToByteTop);
-                            break;
-                        case LEFT:
-                            int[] strengArrayLeft = new int[] {strength};
-                            ArrayList<String> arrayBytesLeft = new ArrayList<>();
+                        try {
+                            switch(getButtonDirection(angle)) {
+                                case TOP:
+                                    int[] strengthArrayTop = new int[] {strength};
 
-                            data = cb.makeChain(FrameType.LEFT.getValue(), strengArrayLeft);
-                            int[] dataArrayIntegerLeft = convertIntegers(data);
-                            byte[] dataToByteLeft = getByteArray(dataArrayIntegerLeft);
+                                    chainData = chainBuilder.makeChain(FrameType.PROGRESS.getValue(), strengthArrayTop);
+                                    int[] dataArrayIntegerForTopChain = convertIntegers(chainData);
+                                    byte[] dataToByteTop = getChainTransform(dataArrayIntegerForTopChain);
 
-                            sendDataService.write(dataToByteLeft);
-                            break;
-                        case RIGHT:
-                            int[] strengArrayRigth = new int[] {strength};
-                            ArrayList<String> arrayBytesRigth = new ArrayList<>();
+                                    sendDataService.write(dataToByteTop);
+                                    break;
+                                case LEFT:
+                                    int[] strengthArrayLeft = new int[] {strength};
 
-                            data = cb.makeChain(FrameType.RIGHT.getValue(), strengArrayRigth);
-                            int[] dataArrayIntegerRigth = convertIntegers(data);
-                            byte[] dataToByteRigth = getByteArray(dataArrayIntegerRigth);
+                                    chainData = chainBuilder.makeChain(FrameType.LEFT.getValue(), strengthArrayLeft);
+                                    int[] dataArrayIntegerForLeftChain = convertIntegers(chainData);
+                                    byte[] dataToByteLeft = getChainTransform(dataArrayIntegerForLeftChain);
 
-                            sendDataService.write(dataToByteRigth);
-                            break;
-                        case BOTTOM:
-                            int[] strengArrayBack = new int[] {strength};
+                                    sendDataService.write(dataToByteLeft);
+                                    break;
+                                case RIGHT:
+                                    int[] strengthArrayRight = new int[] {strength};
 
-                            data = cb.makeChain(FrameType.BACK.getValue(), strengArrayBack);
-                            int[] dataArrayIntegerBack = convertIntegers(data);
-                            byte[] dataToByteBack = getByteArray(dataArrayIntegerBack);
+                                    chainData = chainBuilder.makeChain(FrameType.RIGHT.getValue(), strengthArrayRight);
+                                    int[] dataArrayIntegerForRightChain = convertIntegers(chainData);
+                                    byte[] dataToByteRight = getChainTransform(dataArrayIntegerForRightChain);
 
-                            sendDataService.write(dataToByteBack);
-                            break;
-                        case TOP_LEFT:
-                            break;
-                        case TOP_RIGHT:
-                            break;
-                        case BOTTOM_LEFT:
-                            break;
-                        case BOTTOM_RIGHT:
-                            break;
+                                    sendDataService.write(dataToByteRight);
+                                    break;
+                                case BOTTOM:
+                                    int[] strengthArrayBack = new int[] {strength};
+
+                                    chainData = chainBuilder.makeChain(FrameType.BACK.getValue(), strengthArrayBack);
+                                    int[] dataArrayIntegerForBackChain = convertIntegers(chainData);
+                                    byte[] dataToByteBack = getChainTransform(dataArrayIntegerForBackChain);
+
+                                    sendDataService.write(dataToByteBack);
+                                    break;
+                                case TOP_LEFT:
+                                    break;
+                                case TOP_RIGHT:
+                                    break;
+                                case BOTTOM_LEFT:
+                                    break;
+                                case BOTTOM_RIGHT:
+                                    break;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        tvAngle.setText(angle + "º");
+                        tvStrength.setText(getStrengthToDecimal(strength) + " en decimal.");
                     }
-
-                }catch (IOException e){
-
-                    e.printStackTrace();
-                }
-
-                tvAngle.setText(angle + "º");
-                tvStrength.setText(getStrengthToDecimal(strength) + " en decimal.");
-            }
-        }, 500);
-
+                },
+                500
+        );
     }
 
-    private static int[] convertIntegers(List<Integer> integers)
+    private static int[] convertIntegers(List<Integer> chain)
     {
-        int[] ret = new int[integers.size()];
-        for (int i=0; i < ret.length; i++)
-        {
-            ret[i] = integers.get(i);
+        int[] ret = new int[chain.size()];
+
+        for (int i=0; i < ret.length; i++) {
+            ret[i] = chain.get(i);
         }
+
         return ret;
     }
 
-    private static byte[] convertToByte(int[] ints)
+    private byte[] getChainTransform(int[] chain)
     {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(ints.length * 4);
-        IntBuffer intBuffer = byteBuffer.asIntBuffer();
-        intBuffer.put(ints);
+        byte[] newChainOfbytes = new byte[chain.length];
 
-        byte[] arrayBytes = byteBuffer.array();
-
-        return arrayBytes;
-    }
-
-
-    public byte[] getByteArray(int[] array) {
-        byte[] bytes = new byte[array.length];
-
-        for(int i = 0; i < array.length ; i++) {
-            bytes[i] =(byte) array[i];
+        for(int i = 0; i < chain.length ; i++) {
+            newChainOfbytes[i] = (byte) chain[i];
         }
 
-        return  bytes;
-    }
-
-    public static int convert(int number)
-    {
-        return Integer.valueOf(String.valueOf(number), 16);
+        return  newChainOfbytes;
     }
 
     public int getStrengthToDecimal(int strength){
-        //MAX_STRENGTH = 100%
-        //MIN_STRENGTH = 0&
-        //Se obtiene el decimal de 0 a 255 por regla de 3 simple.
         return (int) Math.ceil((strength * MAX_STRENGTH) / 100);
-
     }
 
     private DIRECTION getButtonDirection (int angle){
