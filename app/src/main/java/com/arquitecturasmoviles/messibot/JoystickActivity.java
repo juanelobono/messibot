@@ -222,9 +222,9 @@ public class JoystickActivity extends Activity {
     {
         DIRECTION direction = null;
 
-//        if (angle >= 0 && angle <= 360 && strength == 0) {
-//            direction = DIRECTION.CENTER;
-//        }
+        if (angle >= 0 && angle <= 360 && strength == 0) {
+            direction = DIRECTION.CENTER;
+        }
 
         if ((angle >= 0 && angle <= 30) || angle >= 330) {
             direction = DIRECTION.RIGHT;
