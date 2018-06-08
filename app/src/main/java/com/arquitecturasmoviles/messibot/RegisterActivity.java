@@ -95,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         });
 
         etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etNewPass);
+        etPassword = findViewById(R.id.etPassword);
         btnRegister = findViewById(R.id.btnRegister);
         tvLogin = findViewById(R.id.tvLogin);
         Spannable wordtoSpan = new SpannableString("¿Tienes una cuenta? Entrar");
