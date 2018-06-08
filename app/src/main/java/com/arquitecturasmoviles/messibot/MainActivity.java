@@ -1,6 +1,5 @@
 package com.arquitecturasmoviles.messibot;
 
-
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity
     private static final int ENABLE_BLUETOOTH_REQUEST_CODE = 1;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothConnectionService mBluetoothConnection;
-    //Button btnStartConnection;
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -66,8 +64,6 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "onDestroy: llamado.");
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver1);
-//      broadcast de Permitir visibilidad: nunca se registra por eso no se puede desuscribir.
-//      unregisterReceiver(mBroadcastReceiver2);
         unregisterReceiver(mBroadcastReceiver3);
         unregisterReceiver(mBroadcastReceiver4);
 
@@ -104,62 +100,45 @@ public class MainActivity extends AppCompatActivity
             btnPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: Validar conexion con equipo remoto para pasar a la activity de joystick
-//                if(mBluetoothAdapter.getBondedDevices().size() > 0){
+                    if (mBluetoothAdapter.isEnabled()) {
+                        if (mBTDevice != null && mBTDevice.getBondState() == mBTDevice.BOND_BONDED) {
 
-                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                    View mView = getLayoutInflater().inflate(R.layout.activity_play, null);
+                            AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                            View mView = getLayoutInflater().inflate(R.layout.activity_play, null);
 
-                    final EditText etPlayPass = mView.findViewById(R.id.etPlayPass);
-                    Button btnPlayPass = mView.findViewById(R.id.btnPlayPass);
-                    btnPlayPass.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if(etPlayPass.getText().toString().equals(playPass)){
-                                Toast.makeText(MainActivity.this, "A jugar!!!",
-                                        Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), JoystickActivity.class);
-                                startActivity(intent);
+                            final EditText etPlayPass = mView.findViewById(R.id.etPlayPass);
+                            Button btnPlayPass = mView.findViewById(R.id.btnPlayPass);
+                            btnPlayPass.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (etPlayPass.getText().toString().equals(playPass)) {
+                                        Toast.makeText(MainActivity.this, "A jugar!!!",
+                                                Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(getApplicationContext(), JoystickActivity.class);
+                                        intent.putExtra(BluetoothDevice.EXTRA_DEVICE, mBTDevice);
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Contraseña incorrecta",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                            mBuilder.setView(mView);
+                            AlertDialog dialog = mBuilder.create();
+                            dialog.show();
+                        } else {
+                            //El usuario cancela el permiso a habilitar el bluetooth.
+                            Toast.makeText(MainActivity.this, R.string.no_connected_device,
+                                    Toast.LENGTH_LONG).show();
                             }
-                            else{
-                                Toast.makeText(MainActivity.this, "Contraseña incorrecta",
-                                        Toast.LENGTH_SHORT).show();
-                            }
+                        } else {
+                        //No esta conectado el bluetooth.
+                        Toast.makeText(MainActivity.this, R.string.bluetooth_disabled,
+                                Toast.LENGTH_LONG).show();
                         }
-                    });
-
-                    mBuilder.setView(mView);
-                    AlertDialog dialog = mBuilder.create();
-                    dialog.show();
-
-                    /*final EditText etNewPass = mView.findViewById(R.id.etNewPass);
-                    Button btnNewPass = mView.findViewById(R.id.btnNewPass);
-
-                    btnNewPass.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if(etNewPass.getText().toString().equals(playPass)){
-                                Toast.makeText(MainActivity.this, "A jugar!!!",
-                                        Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), JoystickActivity.class);
-                                startActivity(intent);
-                            }
-                            else{
-                                Toast.makeText(MainActivity.this, "Contraseña incorrecta",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    });*/
-
-//                }else{
-//                    //El usuario cancela el permiso a habilitar el bluetooth.
-//                    Toast.makeText(MainActivity.this, R.string.no_connected_device,
-//                            Toast.LENGTH_LONG).show();
-//                }
-                }
-            });
-
+                    }
+                });
             lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
             mBTDevices = new ArrayList<>();
 
@@ -181,7 +160,6 @@ public class MainActivity extends AppCompatActivity
                 discoverBTDevices();
             }
 
-
             swOnOffBluetooth.setOnCheckedChangeListener(
                     new CompoundButton.OnCheckedChangeListener() {
                         @Override
@@ -198,14 +176,11 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }
                         }
-                    }
+                    });
 
-            );
+            }
 
         }
-
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -222,10 +197,9 @@ public class MainActivity extends AppCompatActivity
 
                 }
                 break;
-            default: super.onActivityResult(requestCode, resultCode, data);
-                break;
         }
     }
+
 
     public void enableBluetooth(){
         // Si el estado es cambiado a ON desde el switch y no desde el SO.
@@ -503,9 +477,17 @@ public class MainActivity extends AppCompatActivity
         if(VERSION.SDK_INT > VERSION_CODES.JELLY_BEAN_MR2){
             Log.d(TAG, "Tratando de emparejarse con " + deviceName);
             mBTDevices.get(i).createBond();
-
             mBTDevice = mBTDevices.get(i);
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
+            if (mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED){ // Si ya se emparejó el dispositivo alguna vez
+                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
+                //Conexión establecida.
+                Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + deviceName,
+                        Toast.LENGTH_LONG).show();
+            } else{
+                mBTDevice.createBond();
+                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
+            }
         }
     }
 }

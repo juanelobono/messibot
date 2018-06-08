@@ -11,6 +11,7 @@ public class ChainBuilder {
     public static final int START_CHAIN = 126;
     private CheckSum checkSum;
     public ChainBuilder() {
+
         this.checkSum = new CheckSum();
     }
 

@@ -14,6 +14,7 @@ public enum FrameType {
     public final int value;
 
     private FrameType(int value) {
+
         this.value = value;
     }
 

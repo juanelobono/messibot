@@ -20,8 +20,8 @@ public class CheckSum {
         return check;
     }
 
-    public static int convert(int number)
-    {
+    public static int convert(int number) {
+
         return Integer.valueOf(String.valueOf(number), 16);
     }
 }

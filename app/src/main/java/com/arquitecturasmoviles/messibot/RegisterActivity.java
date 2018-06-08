@@ -50,7 +50,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private Button btnRegister;
     private TextView tvLogin;
     private SignInButton signInButtonGoogle;
-    //private ProgressBar progressBar;
     private CallbackManager mCallbackManager;
 
     @Override
@@ -100,7 +99,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         btnRegister = findViewById(R.id.btnRegister);
         tvLogin = findViewById(R.id.tvLogin);
         Spannable wordtoSpan = new SpannableString("¿Tienes una cuenta? Entrar");
-        //wordtoSpan.setSpan(new ForegroundColorSpan(Color.BLUE), 20, 26, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         wordtoSpan.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), 20, 26, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         tvLogin.setText(wordtoSpan);
 
@@ -129,7 +127,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        //progressBar = findViewById(R.id.progressBar);
     }
 
     @Override
@@ -160,7 +157,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             }
                         }
                     });
-
 
         }
     }
@@ -253,7 +249,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private void updateUI(FirebaseUser account) {
         if(account != null){
-            //startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
             Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
             startActivity(intent);
             finish();
