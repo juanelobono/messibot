@@ -468,13 +468,13 @@ public class MainActivity extends AppCompatActivity
             mBTDevice = mBTDevices.get(i);
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
             if (mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED){ // Si ya se emparejó el dispositivo alguna vez
-                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
                 //Conexión establecida.
                 Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + deviceName,
                         Toast.LENGTH_LONG).show();
             } else{
                 mBTDevice.createBond();
-                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
+                Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + deviceName,
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
