@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity
                     AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                     View mView = getLayoutInflater().inflate(R.layout.activity_play, null);
 
-                    /*final EditText etPlayPass = mView.findViewById(R.id.etPlayPass);
+                    final EditText etPlayPass = mView.findViewById(R.id.etPlayPass);
                     Button btnPlayPass = mView.findViewById(R.id.btnPlayPass);
 
                     btnPlayPass.setOnClickListener(new View.OnClickListener() {
@@ -129,8 +129,13 @@ public class MainActivity extends AppCompatActivity
                             }
 
                         }
-                    });*/
-                    final EditText etNewPass = mView.findViewById(R.id.etNewPass);
+                    });
+
+                    mBuilder.setView(mView);
+                    AlertDialog dialog = mBuilder.create();
+                    dialog.show();
+
+                    /*final EditText etNewPass = mView.findViewById(R.id.etNewPass);
                     Button btnNewPass = mView.findViewById(R.id.btnNewPass);
 
                     btnNewPass.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +157,7 @@ public class MainActivity extends AppCompatActivity
 
                     mBuilder.setView(mView);
                     AlertDialog dialog = mBuilder.create();
-                    dialog.show();
+                    dialog.show();*/
 
 //                }else{
 //                    //El usuario cancela el permiso a habilitar el bluetooth.

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AdminActivity">
+    tools:context=".MainActivity">
 
 
     <ImageView
@@ -21,13 +21,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvNewPass"
+        android:id="@+id/tvPlayPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="60dp"
-        android:text="Ingrese la nueva contraseña"
+        android:text="Ingrese la contraseña para jugar"
         android:textColor="@color/colorAccent"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imLogo" />
 
     <EditText
-        android:id="@+id/etNewPass"
+        android:id="@+id/etPlayPass"
         android:layout_width="303dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -47,24 +47,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvNewPass" />
+        app:layout_constraintTop_toBottomOf="@+id/tvPlayPass" />
 
     <Button
-        android:id="@+id/btnNewPass"
+        android:id="@+id/btnPlayPass"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="84dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Confirmar"
         android:background="@color/colorAccent"
+        android:text="Confirmar"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewPass"
-        app:layout_constraintVertical_bias="0.189" />
+        app:layout_constraintVertical_bias="0.436" />
 
 </android.support.constraint.ConstraintLayout>
