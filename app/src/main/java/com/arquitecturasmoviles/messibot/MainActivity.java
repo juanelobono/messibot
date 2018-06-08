@@ -1,5 +1,6 @@
 package com.arquitecturasmoviles.messibot;
 
+
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,25 +9,48 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.UUID;
+
 import static android.os.Build.*;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+
+public class MainActivity extends AppCompatActivity
+        implements AdapterView.OnItemClickListener, NavigationView.OnNavigationItemSelectedListener{
     private static final String TAG = "MainActivity";
+
+    private DrawerLayout mDraweLayout;
+    private ActionBarDrawerToggle mToggle;
+
+    private FirebaseAuth firebaseAuth;
+
     private static final int ENABLE_BLUETOOTH_REQUEST_CODE = 1;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothConnectionService mBluetoothConnection;
+    //Button btnStartConnection;
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -42,80 +66,106 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d(TAG, "onDestroy: llamado.");
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver1);
+//      broadcast de Permitir visibilidad: nunca se registra por eso no se puede desuscribir.
+//      unregisterReceiver(mBroadcastReceiver2);
         unregisterReceiver(mBroadcastReceiver3);
         unregisterReceiver(mBroadcastReceiver4);
+
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        Switch swOnOffBluetooth = findViewById(R.id.swOnOffBluetooh);
-        Button btnPlay = findViewById(R.id.btnPlay);
 
-        btnPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mBluetoothAdapter.isEnabled()){
-                    if(mBTDevice != null && mBTDevice.getBondState() == mBTDevice.BOND_BONDED){
-                        Intent intent = new Intent(MainActivity.this, JoystickActivity.class);
-                        intent.putExtra(BluetoothDevice.EXTRA_DEVICE, mBTDevice);
-                        startActivity(intent);
-                    }else{
-                        //El usuario cancela el permiso a habilitar el bluetooth.
-                        Toast.makeText(MainActivity.this, R.string.no_connected_device,
-                                Toast.LENGTH_LONG).show();
-                   }
-                }else {
-                    //No esta conectado el bluetooth.
-                    Toast.makeText(MainActivity.this, R.string.bluetooth_disabled,
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if(currentUser == null) {
+            Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+            startActivity(intent);
+        } else {
+            mDraweLayout = (DrawerLayout) findViewById(R.id.drawer);
+            mToggle = new ActionBarDrawerToggle(this, mDraweLayout,R.string.open, R.string.close);
+            mDraweLayout.addDrawerListener(mToggle);
+            mToggle.syncState();
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+            navigationView.setNavigationItemSelectedListener(this);
 
-        lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
-        mBTDevices = new ArrayList<>();
+            Switch swOnOffBluetooth = findViewById(R.id.swOnOffBluetooh);
+            Button btnPlay = findViewById(R.id.btnPlay);
 
-        //Broadcasts cuando cambia el estado del enlace
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mBroadcastReceiver4, filter);
-
-        registerReceiver(mBroadcastReceiver1,new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
-
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        lvNewDevices.setOnItemClickListener(MainActivity.this);
-        lvNewDevices.setEmptyView(findViewById(R.id.tvEmptyListViewBluetooth));
-
-        swOnOffBluetooth.setChecked(mBluetoothAdapter.isEnabled());
-        // Si el bluetooth esta activado al iniciar la app, busca los dispositivos cercanos de
-        // forma predeterminada.
-        if (mBluetoothAdapter.isEnabled()){
-            discoverBTDevices();
-        }
-
-        swOnOffBluetooth.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if(isChecked){
-                            Log.d(TAG, "enableDisableBT: Habilitando Bluetooth.");
-                            enableBluetooth();
+            btnPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mBluetoothAdapter.isEnabled()){
+                        if(mBTDevice != null && mBTDevice.getBondState() == mBTDevice.BOND_BONDED){
+                            Intent intent = new Intent(MainActivity.this, JoystickActivity.class);
+                            intent.putExtra(BluetoothDevice.EXTRA_DEVICE, mBTDevice);
+                            startActivity(intent);
                         }else{
-                            Log.d(TAG, "enableDisableBT: Deshabilitando Bluetooth.");
-                            mBluetoothAdapter.disable();
-                            if (mDeviceListAdapter != null){
-                                mDeviceListAdapter.clear();
-                                mDeviceListAdapter.notifyDataSetChanged();
+                            //El usuario cancela el permiso a habilitar el bluetooth.
+                            Toast.makeText(MainActivity.this, R.string.no_connected_device,
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }else {
+                        //No esta conectado el bluetooth.
+                        Toast.makeText(MainActivity.this, R.string.bluetooth_disabled,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
+            mBTDevices = new ArrayList<>();
+
+            //Broadcasts cuando cambia el estado del enlace
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+            registerReceiver(mBroadcastReceiver4, filter);
+
+            registerReceiver(mBroadcastReceiver1,new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED));
+
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+            lvNewDevices.setOnItemClickListener(MainActivity.this);
+            lvNewDevices.setEmptyView(findViewById(R.id.tvEmptyListViewBluetooth));
+
+            swOnOffBluetooth.setChecked(mBluetoothAdapter.isEnabled());
+            // Si el bluetooth esta activado al iniciar la app, busca los dispositivos cercanos de
+            // forma predeterminada.
+            if (mBluetoothAdapter.isEnabled()){
+                discoverBTDevices();
+            }
+
+
+            swOnOffBluetooth.setOnCheckedChangeListener(
+                    new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                            if(isChecked){
+                                Log.d(TAG, "enableDisableBT: Habilitando Bluetooth.");
+                                enableBluetooth();
+                            }else{
+                                Log.d(TAG, "enableDisableBT: Deshabilitando Bluetooth.");
+                                mBluetoothAdapter.disable();
+                                if (mDeviceListAdapter != null){
+                                    mDeviceListAdapter.clear();
+                                    mDeviceListAdapter.notifyDataSetChanged();
+                                }
                             }
                         }
                     }
-                }
 
-        );
+            );
+
+        }
 
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -132,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 }
                 break;
+            default: super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
     }
 
@@ -146,6 +198,58 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             registerReceiver(mBroadcastReceiver1, BTIntent);
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if(mToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item){
+
+        final String userAdmin = "admin";
+        final String passAdmin = "123";
+        int id = item.getItemId();
+
+        if(id == R.id.perfil){
+            Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+            startActivity(intent);
+        }
+        if(id == R.id.admin){
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+            View mView = getLayoutInflater().inflate(R.layout.activity_admin_login, null);
+            final EditText tiUsuarioAdmin = mView.findViewById(R.id.tiUsuarioAdmin);
+            final EditText tiPassAdmin = mView.findViewById(R.id.tiPassAdmin);
+            Button btnLoginAdmin = mView.findViewById(R.id.btnLoginAdmin);
+
+
+            btnLoginAdmin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(tiUsuarioAdmin.getText().toString().equals(userAdmin) && tiPassAdmin.getText().toString().equals(passAdmin)){
+                        Toast.makeText(MainActivity.this, "Acceso satisfactorio",
+                                Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
+                        startActivity(intent);
+                    }
+                    else{
+                        Toast.makeText(MainActivity.this, "Datos incorrectos",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
+            mBuilder.setView(mView);
+            AlertDialog dialog = mBuilder.create();
+            dialog.show();
+        }
+        return false;
+    }
+
 
     // Crea un BroadcastReceiver para ACTION_FOUND
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
@@ -226,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
     };
+
     /**
      * Broadcast Receiver para listar dispositivos que aún no están emparejados
      * -Ejecutado por el método btnDiscover().
@@ -259,7 +364,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //caso1: ya está enlazado
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
-
                 }
                 //caso2: creación de un vínculo
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
@@ -273,6 +377,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     };
 
+    //crear método para iniciar la conexión
+    //la conexión fallará y la aplicación se bloqueará si no hiciste el emparejamiento primero
+    public void startConnection(){
+        startBTConnection(mBTDevice,MY_UUID_INSECURE);
+    }
+
+    public void startBTConnection(BluetoothDevice device, UUID uuid){
+        Log.d(TAG, "startBTConnection: Inicialización de la conexión Bluetooth RFCOM.");
+
+        mBluetoothConnection.startClient(device,uuid);
+    }
+
+    public void btnEnableDisable_Discoverable(View view) {
+        Log.d(TAG, "btnEnableDisable_Discoverable: Hace al dispositivo visible por 300 segundos.");
+
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(discoverableIntent);
+
+        IntentFilter intentFilter = new IntentFilter(mBluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        registerReceiver(mBroadcastReceiver2,intentFilter);
+
+    }
 
     public void discoverBTDevices() {
         Log.d(TAG, "btnDiscover: Búsqueda de dispositivos no emparejados.");
@@ -302,6 +429,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
         }
     }
+
     /**
      Este método es necesario para todos los dispositivos que ejecutan API23+.
      Android debe comprobar programáticamente los permisos para bluetooth. Colocación de los permisos adecuados
@@ -310,17 +438,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      */
     @RequiresApi(api = VERSION_CODES.M)
     private void checkBTPermissions() {
-        if(VERSION.SDK_INT > VERSION_CODES.LOLLIPOP){
+        if(VERSION.SDK_INT > VERSION_CODES.LOLLIPOP) {
             int permissionCheck = this.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
             permissionCheck += this.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
             if (permissionCheck != 0) {
-
                 this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
             }
-        }else{
+        } else {
             Log.d(TAG, "checkBTPermissions: No es necesario comprobar los permisos. Versión SDK < LOLLIPOP.");
         }
     }
+
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         //primero cancela el descubrimiento porque es muy intensivo en memoria.
