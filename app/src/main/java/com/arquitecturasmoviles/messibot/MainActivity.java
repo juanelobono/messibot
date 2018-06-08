@@ -27,7 +27,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -113,7 +112,6 @@ public class MainActivity extends AppCompatActivity
 
                     final EditText etPlayPass = mView.findViewById(R.id.etPlayPass);
                     Button btnPlayPass = mView.findViewById(R.id.btnPlayPass);
-
                     btnPlayPass.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -127,7 +125,6 @@ public class MainActivity extends AppCompatActivity
                                 Toast.makeText(MainActivity.this, "Contraseña incorrecta",
                                         Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     });
 
@@ -153,11 +150,7 @@ public class MainActivity extends AppCompatActivity
                             }
 
                         }
-                    });
-
-                    mBuilder.setView(mView);
-                    AlertDialog dialog = mBuilder.create();
-                    dialog.show();*/
+                    });*/
 
 //                }else{
 //                    //El usuario cancela el permiso a habilitar el bluetooth.
@@ -208,7 +201,6 @@ public class MainActivity extends AppCompatActivity
                     }
 
             );
-
 
         }
 

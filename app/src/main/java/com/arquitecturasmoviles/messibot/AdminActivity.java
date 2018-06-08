@@ -68,7 +68,6 @@ public class AdminActivity extends AppCompatActivity {
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("PLAY_PASS", newPassword);
                             startActivity(intent);
-                           // Intent intent = new Intent(getBaseContext(), AdminActivity.class);
                         }
                     });
 
