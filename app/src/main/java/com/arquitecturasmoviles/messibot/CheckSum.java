@@ -1,13 +1,11 @@
 package com.arquitecturasmoviles.messibot;
 
-import android.widget.Toast;
-
 public class CheckSum {
     int CalculateCheckSum(int[] bytes) {
-        int checkSum = 0, check = 0;
+        int checkSum = 0, check;
 
-        for(int i = 0; i < bytes.length; i++){
-            checkSum += bytes[i];
+        for (int aByte : bytes) {
+            checkSum += aByte;
         }
 
         if (checkSum > 255) {
@@ -18,10 +16,5 @@ public class CheckSum {
         }
 
         return check;
-    }
-
-    public static int convert(int number)
-    {
-        return Integer.valueOf(String.valueOf(number), 16);
     }
 }
