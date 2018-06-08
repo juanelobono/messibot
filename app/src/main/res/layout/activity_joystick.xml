@@ -8,8 +8,9 @@
 
     <io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:id="@+id/joystick"
+
         android:layout_width="288dp"
-        android:layout_height="410dp"
+        android:layout_height="312dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="8dp"
@@ -17,9 +18,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="68dp"
         android:background="@drawable/base_joystick"
+        custom:JV_backgroundSizeRatio="75%"
         custom:JV_borderColor="#a8aead"
-        custom:JV_borderWidth="8dp"
+        custom:JV_borderWidth="4dp"
         custom:JV_buttonColor="#ffe100"
+        custom:JV_buttonSizeRatio="25%"
         custom:layout_constraintBottom_toBottomOf="parent"
         custom:layout_constraintEnd_toEndOf="parent"
         custom:layout_constraintStart_toStartOf="parent"

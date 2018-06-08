@@ -11,8 +11,4 @@
         android:textColor="@color/colorPrimary"
         android:gravity="center_vertical"
         android:textSize="20dp" />
-
-
-
-
 </LinearLayout>

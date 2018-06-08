@@ -1,28 +1,44 @@
 package com.arquitecturasmoviles.messibot;
 
+import android.util.ArraySet;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChainBuilder {
 
-    public static final int START_CHAIN = 0x7E;
+    public static final int START_CHAIN = 126;
     private CheckSum checkSum;
     public ChainBuilder() {
         this.checkSum = new CheckSum();
     }
 
-    public byte[] makeChain(int frameType, byte[] data) {
-        byte[] mbsLbs = BytesUtility.getMSBandLSB(data);
+    public List<Integer> makeChain(int frameType, int[] data) {
+        int[] dataCheckSum = new int[data.length + 1];
 
-        byte[] chain = {START_CHAIN, mbsLbs[0], mbsLbs[1] };
-
-        for (int i = 0; i <= data.length; i++) {
-            chain[chain.length + 1] = data[i];
+        for (int i = 0; i < data.length; i++) {
+            dataCheckSum[i] = data[i];
         }
 
-        data[data.length + 1] = (byte) frameType;
+        int w = dataCheckSum.length - 1;
+        dataCheckSum[w] = frameType;
+        int[] mbsLbs = BytesUtility.getMSBandLSB(data);
 
-        int checkSum = this.checkSum.CalculateCheckSum(data);
+        List<Integer> chain2 = new ArrayList<>();
+        chain2.add(START_CHAIN);
+        chain2.add(mbsLbs[0]);
+        chain2.add(mbsLbs[1]);
+        chain2.add(frameType);
 
-        chain[chain.length + 1] = (byte) checkSum;
+        for (int i = 0; i < data.length; i++) {
+            chain2.add(data[i]);
+        }
 
-        return chain;
+        int checkSum = this.checkSum.CalculateCheckSum(dataCheckSum);
+
+        chain2.add(checkSum);
+
+        return chain2;
     }
 }
