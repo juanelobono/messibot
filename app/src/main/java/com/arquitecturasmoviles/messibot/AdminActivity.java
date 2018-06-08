@@ -46,6 +46,7 @@ public class AdminActivity extends AppCompatActivity {
         arrayPass.add("091256");
         arrayPass.add("506932");
 
+
         btnNewPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,6 +67,7 @@ public class AdminActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("PLAY_PASS", newPassword);
                             startActivity(intent);
                         }
                     });
