@@ -8,6 +8,8 @@ public class ChainBuilder {
     private static final int START_CHAIN = 126;
     private CheckSum checkSum;
 
+
+
     ChainBuilder() {
         this.checkSum = new CheckSum();
     }
@@ -62,6 +64,17 @@ public class ChainBuilder {
 
         for(int i = 0; i < chain.length ; i++) {
             newChainOfbytes[i] = (byte) chain[i];
+        }
+
+        return  newChainOfbytes;
+    }
+
+    public int[] getIntBytes(byte[] chain)
+    {
+        int[] newChainOfbytes = new int[chain.length];
+
+        for(int i = 0; i < chain.length ; i++) {
+            newChainOfbytes[i] = (int) chain[i];
         }
 
         return  newChainOfbytes;

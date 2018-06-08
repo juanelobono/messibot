@@ -1,5 +1,7 @@
 package com.arquitecturasmoviles.messibot;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -12,8 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 public class AdminActivity extends AppCompatActivity {
 
@@ -21,6 +26,12 @@ public class AdminActivity extends AppCompatActivity {
     private Button btnNewPass;
     private String password = "123456";
     private String newPassword;
+    private ChainBuilder chainBuilder;
+    private SendDataService sendDataService;
+    private BluetoothDevice mBTDevice;
+
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +43,22 @@ public class AdminActivity extends AppCompatActivity {
 
         etNewPass = findViewById(R.id.etNewPass);
         btnNewPass = findViewById(R.id.btnNewPass);
+
+        mBTDevice = getIntent().getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+        if (mBTDevice == null){
+            Toast.makeText(AdminActivity.this, "No hay dispositivos conectados.",
+                    Toast.LENGTH_LONG).show();
+        }else{
+            try {
+                sendDataService = new SendDataService(mBTDevice);
+            } catch (IOException e) {
+                Toast.makeText(AdminActivity.this, "Error al establecer la comunicación",
+                        Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+
 
         final ArrayList<String> arrayPass= new ArrayList<>();
 
@@ -65,6 +92,13 @@ public class AdminActivity extends AppCompatActivity {
                     btnAceptar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            try {
+                                sendDataService.write(setNewPassword(etNewPass.getText().toString()));
+                            } catch (IOException e) {
+                                Toast.makeText(AdminActivity.this, "Error al establecer la comunicación",
+                                        Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
+                            }
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
                         }
@@ -81,5 +115,16 @@ public class AdminActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public byte[] setNewPassword(String newPassword)
+    {
+        this.chainBuilder = new ChainBuilder();
+
+        byte[] passByte = newPassword.getBytes();
+        int[] passInt = this.chainBuilder.getIntBytes(passByte);
+
+        byte[] chain = this.chainBuilder.makeChain(FrameType.CHANGE_PASSWORD.getValue(), passInt);
+        return chain;
     }
 }

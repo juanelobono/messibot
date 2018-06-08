@@ -32,10 +32,13 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.UUID;
 
 import static android.os.Build.*;
+import static android.support.constraint.Constraints.TAG;
 
 
 public class MainActivity extends AppCompatActivity
@@ -81,6 +84,8 @@ public class MainActivity extends AppCompatActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -139,6 +144,7 @@ public class MainActivity extends AppCompatActivity
             // forma predeterminada.
             if (mBluetoothAdapter.isEnabled()){
                 discoverBTDevices();
+//                removeBondFromDevices();
             }
 
 
@@ -229,17 +235,22 @@ public class MainActivity extends AppCompatActivity
             btnLoginAdmin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(tiUsuarioAdmin.getText().toString().equals(userAdmin) && tiPassAdmin.getText().toString().equals(passAdmin)){
-                        Toast.makeText(MainActivity.this, "Acceso satisfactorio",
-                                Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
-                        startActivity(intent);
-                    }
-                    else{
-                        Toast.makeText(MainActivity.this, "Datos incorrectos",
-                                Toast.LENGTH_SHORT).show();
-                    }
 
+                    if (mBluetoothAdapter != null && mBTDevice != null) {
+                        if (tiUsuarioAdmin.getText().toString().equals(userAdmin) && tiPassAdmin.getText().toString().equals(passAdmin)) {
+                            Toast.makeText(MainActivity.this, "Acceso satisfactorio",
+                                    Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
+                            intent.putExtra(BluetoothDevice.EXTRA_DEVICE, mBTDevice);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(MainActivity.this, "Datos incorrectos",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(MainActivity.this, "No hay dispositivos conectados o no está habilitado el Bluetooths",
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 
@@ -468,14 +479,34 @@ public class MainActivity extends AppCompatActivity
             mBTDevice = mBTDevices.get(i);
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
             if (mBTDevice.getBondState() == BluetoothDevice.BOND_BONDED){ // Si ya se emparejó el dispositivo alguna vez
-                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
                 //Conexión establecida.
                 Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + deviceName,
                         Toast.LENGTH_LONG).show();
             } else{
+
                 mBTDevice.createBond();
-                mBluetoothConnection.startClient(mBTDevice, MY_UUID_INSECURE);
+//                Toast.makeText(MainActivity.this, "Se ha conectado al dispositivo: " + deviceName,
+//                        Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void removeBondFromDevices(){
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                try {
+                    Method m = device.getClass()
+                            .getMethod("removeBond", (Class[]) null);
+                    m.invoke(device, (Object[]) null);
+                    Log.d(TAG, "Conexiones terminadas.");
+                } catch (Exception e) {
+                    Log.e("Error terminación.", e.getMessage());
+                }
+            }
+        }
+
+
     }
 }
